@@ -1,0 +1,3 @@
+# <type>(<scope>): <subject>
+# Types: feat|fix|refactor|test|docs|chore|ci
+# Scopes: dashboard|finance|tasks|habits|notes|pwa|db|auth|ui|ci
