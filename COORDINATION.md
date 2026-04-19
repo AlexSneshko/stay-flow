@@ -2,24 +2,24 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: 2 — In progress  |  Session: 1
-Last commit: df14615  |  Health: 🟡
+Phase: 4 — COMPLETE  |  Session: 1
+Last commit: 3e5b099  |  Health: ✅
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
 - [x] Phase 1 — Next.js scaffold + all dependencies
-- [ ] Phase 2 — Config files (CLAUDE.md, ECOSYSTEM.md, skills, agents, commands)
-- [ ] Phase 3 — Core infrastructure (Dexie, Prisma, app shell skeleton)
-- [ ] Phase 4 — GitHub Actions CI/CD
+- [x] Phase 2 — Config files (CLAUDE.md, ECOSYSTEM.md, skills, agents, commands)
+- [x] Phase 3 — Core infrastructure (Dexie, Prisma, app shell skeleton)
+- [x] Phase 4 — GitHub Actions CI/CD
 - [ ] STOP HERE — wait for Pencil Dev designs
 
 ## In Progress
-Phase 2: Writing CLAUDE.md, ECOSYSTEM.md, COORDINATION.md, env template
+Infrastructure complete. Waiting for Pencil Dev designs.
 
 ## Next Session — Start Here
-1. git status — check current state
-2. npm run typecheck
-3. Continue with Phase 3 if Phase 2 is complete
+1. Read designs from DESIGN_HANDOFF.md, then implement Phase 5 — Finance module
+2. Run: npm run typecheck && git status
+3. Scaffold src/modules/finance/ using /new-module command
 
 ## Architectural Decisions
 - Local-first: Dexie writes first, Prisma sync secondary
@@ -29,13 +29,25 @@ Phase 2: Writing CLAUDE.md, ECOSYSTEM.md, COORDINATION.md, env template
 - Light + dark theme from day 1 (next-themes CSS variables)
 - Widget registry pattern for dashboard extensibility
 - TransactionCategory uses slug IDs for defaults ("food", "salary" etc)
+- vitest.config.ts excluded from tsconfig (vite version incompatibility)
+- Inter font used instead of Geist (not available in Next.js 14 google fonts)
 
 ## Blockers
 none
 
 ## Key Files Created
-- STAYFLOW_INFRA_PROMPT.md — infrastructure prompt
-- vitest.config.ts — test config
-- src/tests/setup.ts — test setup
-- src/app/layout.tsx — root layout (Inter font)
-- CLAUDE.md, ECOSYSTEM.md — agent context files
+- src/db/dexie.ts — StayFlowDatabase (transactions, categories, recurring, tasks, notes, habits)
+- src/db/seeds.ts — 14 default categories
+- prisma/schema.prisma — full schema with NextAuth models
+- src/lib/utils.ts — cn, formatCurrency, parseCurrencyInput, formatDate
+- src/lib/prisma.ts — Prisma singleton
+- src/lib/auth.ts — NextAuth v5 with Google provider
+- src/store/uiStore.ts — sidebar state
+- src/store/settingsStore.ts — user preferences
+- src/components/providers/Providers.tsx — QueryClient + ThemeProvider + Toaster
+- src/components/layout/ — AppShell, Sidebar, TopNav (placeholders)
+- src/app/(app)/ — dashboard, finance, settings pages
+- src/app/(marketing)/ — landing page
+- src/app/manifest.ts — PWA manifest
+- .claude/ — settings, commands, agents, skills
+- .github/workflows/ — CI + Claude review
