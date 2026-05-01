@@ -1,4 +1,12 @@
 # StayFlow — Claude Code Prompt · Phase 0–4 (Infrastructure Only)
+# ══════════════════════════════════════════════════════════════════
+# ЗАПУСК: перейди в папку stay-flow и запусти:
+#   claude < STAYFLOW_INFRA_PROMPT.md
+#
+# ВАЖНО: этот промт только для инфраструктуры (Phase 0–4).
+# Дизайн уже готов в DESIGN_HANDOFF.md — реализация после Phase 4.
+# ══════════════════════════════════════════════════════════════════
+
 ---
 
 ## IDENTITY & MISSION
@@ -89,7 +97,7 @@ npx create-next-app@latest . \
 npm install zustand dexie dexie-react-hooks
 npm install @tanstack/react-query @tanstack/react-query-devtools
 npm install react-hook-form zod @hookform/resolvers
-npm install recharts date-fns lucide-react next-themes clsx tailwind-merge
+npm install recharts date-fns lucide-react next-themes clsx tailwind-merge immer
 
 # Auth + DB
 npm install next-auth@beta @auth/prisma-adapter @prisma/client
@@ -291,6 +299,38 @@ timezone: string  ← IANA (default 'UTC')
 # The dashboard layout is a fixed grid in MVP.
 # Future: allow user to reorder/hide widgets via a widgetConfig JSON in UserSettings.
 
+## Task (full schema — used when Tasks module is implemented)
+id: string (cuid)
+userId: string
+title: string
+priority: LOW | MEDIUM | HIGH | URGENT  (default MEDIUM)
+categorySlug: string | null  ← task category slug (NOT finance category)
+isPinned: boolean  ← true = repeats every day as a daily task
+timeStart: string | null  ← "09:00" format
+timeEnd: string | null    ← "10:00" format
+date: string  ← YYYY-MM-DD, which day this task belongs to
+completedAt: string | null  ← ISO datetime when completed
+trackedAmount: number | null  ← optional cents amount tracked with task
+notes: string | null
+createdAt: Date
+_dirty: boolean
+
+## TaskCategory (separate from finance categories)
+slug: string  ← "home" | "pet" | "shopping" | "work" | "personal"
+userId: string | null  ← null = system default
+name: string
+icon: string  ← emoji
+color: string  ← hex
+isDefault: boolean
+order: number
+
+## Default Task Categories (seed on first launch)
+🏠 home      Home       #5b8def
+🐾 pet       Pet        #47a373
+🛍 shopping  Shopping   #e8a44a
+💼 work      Work       #8a6bc8
+👤 personal  Personal   #c7943e
+
 ## API Response Envelope
 Success: { data: T }
 Error:   { error: string, code?: string }
@@ -315,7 +355,7 @@ Last commit: —  |  Health: ⬜
 - [ ] Phase 2 — Config files (CLAUDE.md, ECOSYSTEM.md, skills, agents, commands)
 - [ ] Phase 3 — Core infrastructure (Dexie, Prisma, app shell skeleton)
 - [ ] Phase 4 — GitHub Actions CI/CD
-- [ ] STOP HERE — wait for Pencil Dev designs
+- [ ] STOP HERE — design is in DESIGN_HANDOFF.md, implement Phase 5 next
 
 ## In Progress
 Starting Phase 0
@@ -362,6 +402,13 @@ CLAUDE.local.md
 docs/reviews/
 ```
 
+### `/CLAUDE.local.md` (gitignored — personal overrides)
+
+```markdown
+# Local overrides — not committed to git
+# Add personal notes, reminders, workflow tweaks here
+```
+
 After Phase 2: `git add . && git commit -m "chore: CLAUDE.md, ECOSYSTEM.md, COORDINATION.md, env template" && git push`
 
 ---
@@ -384,6 +431,12 @@ src/
         page.tsx          ← dashboard placeholder
       finance/
         page.tsx          ← finance placeholder
+      tasks/
+        page.tsx          ← tasks placeholder
+      recurring/
+        page.tsx          ← recurring placeholder
+      categories/
+        page.tsx          ← categories placeholder
       settings/
         page.tsx          ← settings placeholder
     api/
@@ -404,7 +457,7 @@ src/
     dashboard/            ← will hold dashboard widgets
       widgets/            ← each widget is an isolated component
     finance/              ← Finance module (fully built in Phase 5+)
-    tasks/                ← FUTURE — empty for now
+    tasks/                ← Tasks module (fully built in Phase 6+)
     habits/               ← FUTURE — empty for now
     notes/                ← FUTURE — empty for now
   db/
@@ -480,14 +533,34 @@ export interface DTransactionCategory {
   order: number
 }
 
-// FUTURE TABLES — declared now, used later
+// FUTURE TABLES — full schemas declared now, tables used when modules are built
 export interface DTask {
   id?: number
   remoteId: string | null
   userId: string
   title: string
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
+  categorySlug: string | null
+  isPinned: boolean
+  timeStart: string | null   // "09:00"
+  timeEnd: string | null     // "10:00"
+  date: string               // YYYY-MM-DD
+  completedAt: string | null // ISO datetime
+  trackedAmount: number | null // cents
+  notes: string | null
+  createdAt: Date
   _dirty: boolean
-  // Full schema added when Tasks module is built
+}
+
+export interface DTaskCategory {
+  id?: number
+  slug: string
+  userId: string | null
+  name: string
+  icon: string
+  color: string
+  isDefault: boolean
+  order: number
 }
 
 export interface DNote {
@@ -512,9 +585,10 @@ export class StayFlowDatabase extends Dexie {
   transactions!: Table<DTransaction>
   recurringTransactions!: Table<DRecurringTransaction>
   categories!: Table<DTransactionCategory>
-  tasks!: Table<DTask>           // future
-  notes!: Table<DNote>           // future
-  habits!: Table<DHabit>         // future
+  tasks!: Table<DTask>
+  taskCategories!: Table<DTaskCategory>
+  notes!: Table<DNote>
+  habits!: Table<DHabit>
 
   constructor() {
     super('stayflow-v1')
@@ -525,7 +599,10 @@ export class StayFlowDatabase extends Dexie {
         '++id, remoteId, userId, type, frequency, nextDueDate, active, _dirty',
       categories:
         '++id, slug, userId, type, isDefault, order',
-      tasks:   '++id, remoteId, userId, _dirty',
+      tasks:
+        '++id, remoteId, userId, priority, categorySlug, isPinned, date, completedAt, _dirty',
+      taskCategories:
+        '++id, slug, userId, isDefault, order',
       notes:   '++id, remoteId, userId, _dirty',
       habits:  '++id, remoteId, userId, _dirty',
     })
@@ -564,6 +641,20 @@ export async function seedDefaultCategories(): Promise<void> {
   const existing = await db.categories.where('isDefault').equals(1).count()
   if (existing > 0) return // already seeded
   await db.categories.bulkAdd(DEFAULT_CATEGORIES)
+}
+
+const DEFAULT_TASK_CATEGORIES: Omit<DTaskCategory, 'id'>[] = [
+  { slug: 'home',     userId: null, name: 'Home',     icon: '🏠', color: '#5b8def', isDefault: true, order: 1 },
+  { slug: 'pet',      userId: null, name: 'Pet',      icon: '🐾', color: '#47a373', isDefault: true, order: 2 },
+  { slug: 'shopping', userId: null, name: 'Shopping', icon: '🛍', color: '#e8a44a', isDefault: true, order: 3 },
+  { slug: 'work',     userId: null, name: 'Work',     icon: '💼', color: '#8a6bc8', isDefault: true, order: 4 },
+  { slug: 'personal', userId: null, name: 'Personal', icon: '👤', color: '#c7943e', isDefault: true, order: 5 },
+]
+
+export async function seedDefaultTaskCategories(): Promise<void> {
+  const existing = await db.taskCategories.where('isDefault').equals(1).count()
+  if (existing > 0) return
+  await db.taskCategories.bulkAdd(DEFAULT_TASK_CATEGORIES)
 }
 ```
 
@@ -864,6 +955,9 @@ Create minimal placeholder for each app page:
 `src/app/(app)/layout.tsx` — returns AppShell wrapper (placeholder sidebar + topnav)
 `src/app/(app)/dashboard/page.tsx` — `<h1>Dashboard</h1>` placeholder
 `src/app/(app)/finance/page.tsx` — `<h1>Finance</h1>` placeholder
+`src/app/(app)/tasks/page.tsx` — `<h1>Tasks</h1>` placeholder
+`src/app/(app)/recurring/page.tsx` — `<h1>Recurring</h1>` placeholder
+`src/app/(app)/categories/page.tsx` — `<h1>Categories</h1>` placeholder
 `src/app/(app)/settings/page.tsx` — `<h1>Settings</h1>` placeholder
 `src/app/(marketing)/page.tsx` — `<h1>StayFlow — coming soon</h1>` (SSR, no 'use client')
 
@@ -1232,8 +1326,8 @@ After Phase 4 is complete:
 1. Run `npm run check` — must pass
 2. Update COORDINATION.md:
    - Mark all 4 phases ✅
-   - Set status: "Infrastructure complete. Waiting for Pencil Dev designs."
-   - Write Next Session as: "Read designs from DESIGN_HANDOFF.md, then implement Phase 5 — Finance module"
+   - Set status: "Infrastructure complete. Design ready in DESIGN_HANDOFF.md."
+   - Write Next Session as: "Read DESIGN_HANDOFF.md, then implement Phase 5 — Finance module"
 3. Commit + push COORDINATION.md
 4. Print this summary:
 
@@ -1247,7 +1341,7 @@ Last commit:    [hash]
 
 What's set up:
 ✅ Next.js 14 + TypeScript strict + Tailwind + shadcn/ui
-✅ Dexie.js offline DB (transactions, categories, recurring)
+✅ Dexie.js offline DB (transactions, categories, recurring, tasks, taskCategories)
 ✅ Prisma schema (Transaction, RecurringTransaction, Category, User, NextAuth)
 ✅ Zustand stores (ui, settings)
 ✅ Light + dark theme (next-themes)
@@ -1258,10 +1352,11 @@ What's set up:
 ✅ Skills: finance-patterns, git-workflow
 ✅ Agents: code-reviewer, test-writer
 ✅ Commands: handoff, resume, commit, new-module
+✅ Routes: dashboard, finance, tasks, recurring, categories, settings
 
 Next step:
-→ Design screens in Pencil Dev using DESIGN_REQUIREMENTS.md
-→ Then: claude "read COORDINATION.md and continue" to implement Phase 5+
+→ Design is ready in DESIGN_HANDOFF.md + StayFlow.html (Claude Design)
+→ Run: claude "read COORDINATION.md and DESIGN_HANDOFF.md" to implement Phase 5
 ══════════════════════════════════════
 ```
 

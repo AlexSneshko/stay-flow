@@ -53,7 +53,28 @@ export interface DTask {
   remoteId: string | null
   userId: string
   title: string
+  priority: 'LOW' | 'MEDIUM' | 'HIGH' | 'URGENT'
+  categorySlug: string | null
+  isPinned: boolean
+  timeStart: string | null
+  timeEnd: string | null
+  date: string
+  completedAt: string | null
+  trackedAmount: number | null
+  notes: string | null
+  createdAt: Date
   _dirty: boolean
+}
+
+export interface DTaskCategory {
+  id?: number
+  slug: string
+  userId: string | null
+  name: string
+  icon: string
+  color: string
+  isDefault: boolean
+  order: number
 }
 
 export interface DNote {
@@ -77,6 +98,7 @@ export class StayFlowDatabase extends Dexie {
   recurringTransactions!: Table<DRecurringTransaction>
   categories!: Table<DTransactionCategory>
   tasks!: Table<DTask>
+  taskCategories!: Table<DTaskCategory>
   notes!: Table<DNote>
   habits!: Table<DHabit>
 
@@ -89,7 +111,10 @@ export class StayFlowDatabase extends Dexie {
         '++id, remoteId, userId, type, frequency, nextDueDate, active, _dirty',
       categories:
         '++id, slug, userId, type, isDefault, order',
-      tasks:   '++id, remoteId, userId, _dirty',
+      tasks:
+        '++id, remoteId, userId, priority, categorySlug, isPinned, date, completedAt, _dirty',
+      taskCategories:
+        '++id, slug, userId, isDefault, order',
       notes:   '++id, remoteId, userId, _dirty',
       habits:  '++id, remoteId, userId, _dirty',
     })

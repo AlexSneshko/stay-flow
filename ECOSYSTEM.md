@@ -63,6 +63,38 @@ timezone: string  ← IANA (default 'UTC')
 # The dashboard layout is a fixed grid in MVP.
 # Future: allow user to reorder/hide widgets via a widgetConfig JSON in UserSettings.
 
+## Task (full schema — used when Tasks module is implemented)
+id: string (cuid)
+userId: string
+title: string
+priority: LOW | MEDIUM | HIGH | URGENT  (default MEDIUM)
+categorySlug: string | null  ← task category slug (NOT finance category)
+isPinned: boolean  ← true = repeats every day as a daily task
+timeStart: string | null  ← "09:00" format
+timeEnd: string | null    ← "10:00" format
+date: string  ← YYYY-MM-DD, which day this task belongs to
+completedAt: string | null  ← ISO datetime when completed
+trackedAmount: number | null  ← optional cents amount tracked with task
+notes: string | null
+createdAt: Date
+_dirty: boolean
+
+## TaskCategory (separate from finance categories)
+slug: string  ← "home" | "pet" | "shopping" | "work" | "personal"
+userId: string | null  ← null = system default
+name: string
+icon: string  ← emoji
+color: string  ← hex
+isDefault: boolean
+order: number
+
+## Default Task Categories (seed on first launch)
+🏠 home      Home       #5b8def
+🐾 pet       Pet        #47a373
+🛍 shopping  Shopping   #e8a44a
+💼 work      Work       #8a6bc8
+👤 personal  Personal   #c7943e
+
 ## API Response Envelope
 Success: { data: T }
 Error:   { error: string, code?: string }

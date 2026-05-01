@@ -2,8 +2,8 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: 4 — COMPLETE  |  Session: 1
-Last commit: 3e5b099  |  Health: ✅
+Phase: 4 — COMPLETE  |  Session: 2
+Last commit: ab13685  |  Health: ✅
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
@@ -14,10 +14,10 @@ Last commit: 3e5b099  |  Health: ✅
 - [ ] STOP HERE — wait for Pencil Dev designs
 
 ## In Progress
-Infrastructure complete. Waiting for Pencil Dev designs.
+Infrastructure complete. Design ready in DESIGN_HANDOFF.md.
 
 ## Next Session — Start Here
-1. Read designs from DESIGN_HANDOFF.md, then implement Phase 5 — Finance module
+1. Read DESIGN_HANDOFF.md, then implement Phase 5 — Finance module
 2. Run: npm run typecheck && git status
 3. Scaffold src/modules/finance/ using /new-module command
 
@@ -36,8 +36,8 @@ Infrastructure complete. Waiting for Pencil Dev designs.
 none
 
 ## Key Files Created
-- src/db/dexie.ts — StayFlowDatabase (transactions, categories, recurring, tasks, notes, habits)
-- src/db/seeds.ts — 14 default categories
+- src/db/dexie.ts — StayFlowDatabase (transactions, categories, recurring, tasks+full schema, taskCategories, notes, habits)
+- src/db/seeds.ts — 14 finance categories + 5 task categories
 - prisma/schema.prisma — full schema with NextAuth models
 - src/lib/utils.ts — cn, formatCurrency, parseCurrencyInput, formatDate
 - src/lib/prisma.ts — Prisma singleton

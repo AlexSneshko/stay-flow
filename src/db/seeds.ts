@@ -1,5 +1,5 @@
 import { db } from './dexie'
-import type { DTransactionCategory } from './dexie'
+import type { DTransactionCategory, DTaskCategory } from './dexie'
 
 const DEFAULT_CATEGORIES: Omit<DTransactionCategory, 'id'>[] = [
   { remoteId: null, slug: 'food',          userId: null, name: 'Food',          icon: '🍕', color: '#f7971e', type: 'EXPENSE', isDefault: true, order: 1 },
@@ -22,4 +22,18 @@ export async function seedDefaultCategories(): Promise<void> {
   const existing = await db.categories.where('isDefault').equals(1).count()
   if (existing > 0) return
   await db.categories.bulkAdd(DEFAULT_CATEGORIES)
+}
+
+const DEFAULT_TASK_CATEGORIES: Omit<DTaskCategory, 'id'>[] = [
+  { slug: 'home',     userId: null, name: 'Home',     icon: '🏠', color: '#5b8def', isDefault: true, order: 1 },
+  { slug: 'pet',      userId: null, name: 'Pet',      icon: '🐾', color: '#47a373', isDefault: true, order: 2 },
+  { slug: 'shopping', userId: null, name: 'Shopping', icon: '🛍', color: '#e8a44a', isDefault: true, order: 3 },
+  { slug: 'work',     userId: null, name: 'Work',     icon: '💼', color: '#8a6bc8', isDefault: true, order: 4 },
+  { slug: 'personal', userId: null, name: 'Personal', icon: '👤', color: '#c7943e', isDefault: true, order: 5 },
+]
+
+export async function seedDefaultTaskCategories(): Promise<void> {
+  const existing = await db.taskCategories.where('isDefault').equals(1).count()
+  if (existing > 0) return
+  await db.taskCategories.bulkAdd(DEFAULT_TASK_CATEGORIES)
 }
