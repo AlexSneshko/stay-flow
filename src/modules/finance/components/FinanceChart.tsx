@@ -76,7 +76,7 @@ export function FinanceChart({ data }: FinanceChartProps) {
   }, [data])
 
   return (
-    <div className="sf-card" style={{ gridColumn: 1 }}>
+    <div className="sf-card" style={{ padding: '18px 20px' }}>
       <div className="sf-card-head">
         <div className="sf-card-label">Income vs Expenses · 6M</div>
         <div className="sf-chart-legend">

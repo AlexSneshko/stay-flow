@@ -74,17 +74,24 @@ export default function FinancePage() {
         <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
           <div className="sf-month-selector">
             <button onClick={prevMonth} aria-label="Previous month">
-              <ChevronLeft size={16} />
+              <ChevronLeft size={14} />
             </button>
             <span className="sf-month-selector-label">{monthLabel} {y}</span>
             <button onClick={nextMonth} aria-label="Next month">
-              <ChevronRight size={16} />
+              <ChevronRight size={14} />
             </button>
           </div>
+          <select className="sf-select">
+            <option>All accounts</option>
+            <option>Checking · Primary</option>
+            <option>Savings</option>
+          </select>
         </div>
-        <button className="sf-btn sf-btn-primary" onClick={() => setEditTxn(null)}>
-          <Plus size={15} /> Add
-        </button>
+        <div className="sf-fin-tools-right">
+          <button className="sf-btn sf-btn-primary" onClick={() => setEditTxn(null)}>
+            <Plus size={15} /> Add
+          </button>
+        </div>
       </div>
 
       <FinanceStatRow
@@ -104,6 +111,7 @@ export default function FinancePage() {
           year={y}
           month={m}
           transactions={txns}
+          categories={categories}
           weekStartsOn={weekStartsOn}
           currency={currency}
           totalSpent={fmt(expense)}
@@ -113,6 +121,7 @@ export default function FinancePage() {
       <TransactionList
         transactions={txns}
         categories={categories}
+        currency={currency}
         onEdit={t => setEditTxn(t)}
         onNew={() => setEditTxn(null)}
       />

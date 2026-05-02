@@ -2,12 +2,13 @@
 
 import { Check } from 'lucide-react'
 import { type DTransaction, type DTransactionCategory, db } from '@/db/dexie'
-import { txnInitials, parseISO } from '@/lib/utils'
+import { txnInitials, parseISO, formatCurrency } from '@/lib/utils'
 import { MONTHS_SHORT, WEEKDAYS } from '../types'
 
 interface TxnRowProps {
   txn: DTransaction
   categories: DTransactionCategory[]
+  currency: string
   onEdit: (txn: DTransaction) => void
   onConfirm: (id: number) => void
 }
@@ -20,13 +21,14 @@ function getCategory(slug: string, cats: DTransactionCategory[]): DTransactionCa
   }
 }
 
-export function TxnRow({ txn, categories, onEdit, onConfirm }: TxnRowProps) {
+export function TxnRow({ txn, categories, currency, onEdit, onConfirm }: TxnRowProps) {
   const cat = getCategory(txn.categorySlug, categories)
   const isPending = txn.status === 'PENDING'
   const amtClass = isPending ? 'pending' : txn.type === 'INCOME' ? 'income' : 'expense'
   const sign = txn.type === 'INCOME' ? '+' : '−'
   const dateObj = parseISO(txn.date)
   const dateStr = `${MONTHS_SHORT[dateObj.getMonth()]} ${dateObj.getDate()}`
+  const cur = txn.currency || currency
 
   return (
     <div className="sf-txn-row" onClick={() => onEdit(txn)}>
@@ -39,7 +41,7 @@ export function TxnRow({ txn, categories, onEdit, onConfirm }: TxnRowProps) {
       </div>
       <div className={`sf-txn-amount ${amtClass}`}>
         {isPending && <span className="sf-pending-tag">pending</span>}
-        <span>{sign}{(txn.amount / 100).toFixed(2)}</span>
+        <span>{sign}{formatCurrency(txn.amount, cur)}</span>
         {isPending && txn.id !== undefined && (
           <button
             className="sf-confirm-btn"
@@ -58,27 +60,30 @@ interface TxnGroupProps {
   date: string
   txns: DTransaction[]
   categories: DTransactionCategory[]
+  currency: string
   onEdit: (txn: DTransaction) => void
   onConfirm: (id: number) => void
 }
 
-export function TxnGroup({ date, txns, categories, onEdit, onConfirm }: TxnGroupProps) {
+export function TxnGroup({ date, txns, categories, currency, onEdit, onConfirm }: TxnGroupProps) {
   const d = parseISO(date)
   const label = `${WEEKDAYS[d.getDay()]}, ${MONTHS_SHORT[d.getMonth()]} ${d.getDate()}`
-  const confirmed = txns.filter(t => t.type === 'EXPENSE' && t.status === 'CONFIRMED')
-  const total = confirmed.reduce((s, t) => s + t.amount, 0)
+  const total = txns
+    .filter(t => t.type === 'EXPENSE' && t.status === 'CONFIRMED')
+    .reduce((s, t) => s + t.amount, 0)
 
   return (
     <div className="sf-txn-group">
       <div className="sf-txn-group-header">
         <span>{label} · {txns.length} item{txns.length > 1 ? 's' : ''}</span>
-        <span>{total > 0 ? `$${(total / 100).toFixed(2)}` : ''}</span>
+        <span>{total > 0 ? formatCurrency(total, currency) : ''}</span>
       </div>
       {txns.map(t => (
         <TxnRow
           key={t.id}
           txn={t}
           categories={categories}
+          currency={currency}
           onEdit={onEdit}
           onConfirm={onConfirm}
         />
@@ -90,11 +95,12 @@ export function TxnGroup({ date, txns, categories, onEdit, onConfirm }: TxnGroup
 interface TransactionListProps {
   transactions: DTransaction[]
   categories: DTransactionCategory[]
+  currency: string
   onEdit: (txn: DTransaction) => void
   onNew: () => void
 }
 
-export function TransactionList({ transactions, categories, onEdit, onNew }: TransactionListProps) {
+export function TransactionList({ transactions, categories, currency, onEdit, onNew }: TransactionListProps) {
   async function handleConfirm(id: number) {
     await db.transactions.update(id, { status: 'CONFIRMED' })
   }
@@ -111,7 +117,6 @@ export function TransactionList({ transactions, categories, onEdit, onNew }: Tra
     )
   }
 
-  // Group by date
   const groups: Record<string, DTransaction[]> = {}
   for (const t of transactions) {
     if (!groups[t.date]) groups[t.date] = []
@@ -127,6 +132,7 @@ export function TransactionList({ transactions, categories, onEdit, onNew }: Tra
           date={date}
           txns={groups[date]}
           categories={categories}
+          currency={currency}
           onEdit={onEdit}
           onConfirm={handleConfirm}
         />

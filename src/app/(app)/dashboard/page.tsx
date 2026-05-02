@@ -223,6 +223,7 @@ export default function DashboardPage() {
               key={t.id}
               txn={t}
               categories={categories}
+              currency={currency}
               onEdit={() => {}}
               onConfirm={async id => { await db.transactions.update(id, { status: 'CONFIRMED' }) }}
             />

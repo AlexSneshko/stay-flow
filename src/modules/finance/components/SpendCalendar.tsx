@@ -1,8 +1,8 @@
 'use client'
 
 import { useMemo, useState } from 'react'
-import { type DTransaction } from '@/db/dexie'
-import { pad, parseISO } from '@/lib/utils'
+import { type DTransaction, type DTransactionCategory } from '@/db/dexie'
+import { pad, parseISO, formatCurrency } from '@/lib/utils'
 
 const WEEKDAY_LABELS_MON = ['M','T','W','T','F','S','S']
 const WEEKDAY_LABELS_SUN = ['S','M','T','W','T','F','S']
@@ -11,6 +11,7 @@ interface SpendCalendarProps {
   year: number
   month: number
   transactions: DTransaction[]
+  categories: DTransactionCategory[]
   weekStartsOn: 0 | 1
   currency: string
   totalSpent: string
@@ -32,50 +33,57 @@ function bgFor(cents: number): string {
   return 'color-mix(in oklab, var(--accent) 80%, transparent)'
 }
 
-export function SpendCalendar({ year, month, transactions, weekStartsOn, totalSpent }: SpendCalendarProps) {
+export function SpendCalendar({ year, month, transactions, categories, weekStartsOn, currency, totalSpent }: SpendCalendarProps) {
   const [tooltip, setTooltip] = useState<TooltipData | null>(null)
   const ym = `${year}-${pad(month)}`
 
   const { perDay, daysInMonth, startOffset, headDays, todayDate, isCurrentMonth } = useMemo(() => {
     const first = new Date(year, month - 1, 1)
-    const daysInMonth = new Date(year, month, 0).getDate()
-    const headDays = weekStartsOn === 1 ? WEEKDAY_LABELS_MON : WEEKDAY_LABELS_SUN
-    const startOffset = (first.getDay() - weekStartsOn + 7) % 7
-    const perDay: Record<number, number> = {}
+    const daysInMo = new Date(year, month, 0).getDate()
+    const heads = weekStartsOn === 1 ? WEEKDAY_LABELS_MON : WEEKDAY_LABELS_SUN
+    const offset = (first.getDay() - weekStartsOn + 7) % 7
+    const pd: Record<number, number> = {}
     for (const t of transactions) {
       if (!t.date.startsWith(ym)) continue
       if (t.type !== 'EXPENSE' || t.status !== 'CONFIRMED') continue
       const d = parseISO(t.date).getDate()
-      perDay[d] = (perDay[d] || 0) + t.amount
+      pd[d] = (pd[d] || 0) + t.amount
     }
     const today = new Date()
     return {
-      perDay,
-      daysInMonth,
-      startOffset,
-      headDays,
+      perDay: pd,
+      daysInMonth: daysInMo,
+      startOffset: offset,
+      headDays: heads,
       todayDate: today.getDate(),
       isCurrentMonth: today.getFullYear() === year && today.getMonth() === month - 1,
     }
   }, [year, month, transactions, weekStartsOn, ym])
+
+  function getCatName(slug: string): string {
+    return categories.find(c => c.slug === slug)?.name ?? slug
+  }
 
   function handleMouseEnter(e: React.MouseEvent<HTMLDivElement>, d: number) {
     const dateStr = `${year}-${pad(month)}-${pad(d)}`
     const items = transactions
       .filter(t => t.date === dateStr)
       .slice(0, 6)
-      .map(t => ({ label: t.note || dateStr, amount: t.amount, type: t.type }))
+      .map(t => ({ label: t.note || getCatName(t.categorySlug), amount: t.amount, type: t.type }))
     if (!items.length) return
     const rect = e.currentTarget.getBoundingClientRect()
-    setTooltip({ x: rect.right + 8, y: rect.top, date: dateStr, items })
+    let x = rect.right + 8
+    const tw = 200
+    if (x + tw > window.innerWidth - 8) x = rect.left - tw - 8
+    setTooltip({ x: Math.max(8, x), y: Math.max(8, rect.top), date: dateStr, items })
   }
+
+  const monthName = new Date(year, month - 1).toLocaleString('en-US', { month: 'long' }).toUpperCase()
 
   return (
     <div className="sf-card" onMouseLeave={() => setTooltip(null)}>
       <div className="sf-card-head">
-        <div className="sf-card-label">
-          {new Date(year, month - 1).toLocaleString('en-US', { month: 'long' }).toUpperCase()} · Daily
-        </div>
+        <div className="sf-card-label">{monthName} · Daily</div>
         <div className="sf-card-label">{totalSpent} spent</div>
       </div>
       <div className="sf-cal-grid">
@@ -103,18 +111,17 @@ export function SpendCalendar({ year, month, transactions, weekStartsOn, totalSp
 
       {tooltip && (
         <div
-          className="fixed z-50 bg-[var(--bg-surface)] border border-[var(--border)] rounded-[10px] px-3.5 py-2.5 shadow-lg min-w-[160px]"
-          style={{ left: tooltip.x, top: tooltip.y, pointerEvents: 'none' }}
+          className="sf-cal-tooltip"
+          style={{ left: tooltip.x, top: tooltip.y }}
         >
-          <div className="text-[11px] uppercase tracking-wider text-[var(--text-secondary)] font-semibold mb-2">
-            {new Date(tooltip.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
+          <div className="sf-cal-tooltip-head">
+            {parseISO(tooltip.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}
           </div>
           {tooltip.items.map((item, i) => (
-            <div key={i} className="flex justify-between gap-6 text-[13px] text-[var(--text-primary)] py-0.5">
+            <div key={i} className="sf-cal-tooltip-row">
               <span>{item.label}</span>
               <span style={{ color: item.type === 'INCOME' ? 'var(--income)' : 'var(--expense)' }}>
-                {item.type === 'INCOME' ? '+' : '−'}
-                {(item.amount / 100).toFixed(2)}
+                {item.type === 'INCOME' ? '+' : '−'}{formatCurrency(item.amount, currency)}
               </span>
             </div>
           ))}
