@@ -1,14 +1,19 @@
 'use client'
+
 import { Sidebar } from './Sidebar'
 import { TopNav } from './TopNav'
+import { BottomNav } from './BottomNav'
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="sf-app">
       <Sidebar />
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div className="sf-main">
         <TopNav />
-        <main className="flex-1 overflow-auto p-6">{children}</main>
+        <main className="sf-page">
+          {children}
+        </main>
+        <BottomNav />
       </div>
     </div>
   )
