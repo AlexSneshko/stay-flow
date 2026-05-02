@@ -2,8 +2,8 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: 9 — COMPLETE  |  Session: 3
-Last commit: b0eb012  |  Health: ✅
+Phase: 5 — DESIGN MATCHED  |  Session: 4
+Last commit: 72776a7  |  Health: ✅
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
@@ -18,13 +18,16 @@ Last commit: b0eb012  |  Health: ✅
 - [x] Phase 9 — Recurring, Categories, Settings pages
 
 ## In Progress
-MVP UI complete. Build passes (✓ typecheck, ✓ lint, ✓ build).
+Finance module design-matched (session 4). All other phases still need same treatment.
 
 ## Next Session — Start Here
-1. Run: npm run dev && open http://localhost:3000/dashboard
-2. UI review pass: check all pages in browser, fix visual regressions
-3. Optional: write smoke tests (vitest currently exits 1 — no test files)
-4. Optional: wire Prisma sync for confirmed transactions
+1. npm run dev → open http://localhost:3000/finance to verify Finance page
+2. Apply same design-match pass to remaining pages: Dashboard, Tasks, Recurring, Categories, Settings
+3. Key remaining gaps per design:
+   - Dashboard greeting/sparkline card (check font sizes, layout)
+   - Tasks: task row uses bg-surface card style in design, not bare flex
+   - Recurring: rec-row is a surface card (bg-surface + border), not hover-only
+   - Categories: cat-row grid (40px 1fr auto auto) confirmed; check system label
 
 ## Architectural Decisions
 - Local-first: Dexie writes first, Prisma sync secondary
