@@ -2,8 +2,8 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: 6 — DASHBOARD DESIGN MATCHED  |  Session: 6
-Last commit: 8693a4a  |  Health: ✅
+Phase: 8 — TASKS DESIGN MATCHED  |  Session: 7
+Last commit: cb1c89f  |  Health: ✅
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
@@ -18,16 +18,15 @@ Last commit: 8693a4a  |  Health: ✅
 - [x] Phase 9 — Recurring, Categories, Settings pages
 
 ## In Progress
-Dashboard design-matched (session 6). Tasks, Recurring, Categories, Settings still need same treatment.
+Tasks design-matched (session 7). Recurring, Categories, Settings still need same treatment.
 
 ## Next Session — Start Here
-1. npm run dev → open http://localhost:3000/dashboard to verify Dashboard page
-2. Apply design-match pass to remaining pages: Tasks, Recurring, Categories, Settings
+1. npm run dev → open http://localhost:3000/tasks to verify Tasks page
+2. Apply design-match pass to remaining pages: Recurring, Categories, Settings
 3. Key remaining gaps per design:
-   - Tasks: task row uses bg-surface card style in design, not bare flex
-   - Recurring: rec-row is a surface card (bg-surface + border), not hover-only
-   - Categories: cat-row grid (40px 1fr auto auto) confirmed; check system label
-   - Settings: check section headers, toggle styles, select widths
+   - Recurring: rec-row is a surface card (bg-surface + border), not hover-only; rec-stats grid
+   - Categories: cat-row grid (40px 1fr auto auto) confirmed; check system label badge
+   - Settings: section headers, toggle-row styles, select widths
 
 ## Architectural Decisions
 - Local-first: Dexie writes first, Prisma sync secondary
