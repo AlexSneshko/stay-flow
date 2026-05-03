@@ -9,8 +9,9 @@ import { useFinanceStore } from '@/store/financeStore'
 import { seedDefaultCategories, seedDefaultTaskCategories } from '@/db/seeds'
 import { formatCurrency, getWeekNumber, parseISO } from '@/lib/utils'
 import { monthStats, prevYM, last6Months, sumAmount } from '@/modules/finance/hooks/useFinanceData'
-import { MONTHS, MONTHS_SHORT } from '@/modules/finance/types'
+import { MONTHS } from '@/modules/finance/types'
 import { TxnRow } from '@/modules/finance/components/TransactionList'
+import { sortTasks, taskDueInfo } from '@/modules/tasks/hooks/useTasks'
 
 export default function DashboardPage() {
   const { currency, roundToNearestDollar } = useSettingsStore()
@@ -39,8 +40,7 @@ export default function DashboardPage() {
 
   // vs prev month same-day
   const prev = prevYM(activeMonth)
-  const today = new Date()
-  const dayCutoff = today.getDate()
+  const dayCutoff = now.getDate()
   const prevPartial = allTxns.filter(t =>
     t.date.startsWith(prev) && t.status === 'CONFIRMED' &&
     parseISO(t.date).getDate() <= dayCutoff
@@ -61,15 +61,8 @@ export default function DashboardPage() {
     .sort((a, b) => b.date.localeCompare(a.date) || b.createdAt.localeCompare(a.createdAt))
     .slice(0, 5)
 
-  // Upcoming tasks
-  const openTasks = tasks
-    .filter(t => !t.completed)
-    .sort((a, b) => {
-      const ad = a.dueDate ?? '9999-12-31'
-      const bd = b.dueDate ?? '9999-12-31'
-      return ad.localeCompare(bd)
-    })
-    .slice(0, 4)
+  // Upcoming tasks: sorted, incomplete only, max 4
+  const openTasks = sortTasks(tasks.filter(t => !t.completed)).slice(0, 4)
 
   async function toggleTask(id: number | undefined) {
     if (!id) return
@@ -92,7 +85,7 @@ export default function DashboardPage() {
       x: p + (i * (w - p * 2)) / (values.length - 1),
       y: p + (h - p * 2) * (1 - (v - min) / range),
     }))
-    const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')
+    const d = pts.map((pt, i) => `${i === 0 ? 'M' : 'L'}${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' ')
     const last = pts[pts.length - 1]
     return (
       <svg viewBox={`0 0 ${w} ${h}`} className="sf-sparkline" preserveAspectRatio="none">
@@ -134,13 +127,13 @@ export default function DashboardPage() {
           <div className="sf-finance-rows">
             <div className="sf-finance-row">
               <span className="sf-finance-row-label">
-                <span style={{ color: 'var(--income)', fontSize: 14 }}>↑</span> Income
+                <span style={{ color: 'var(--income)' }}>↑</span> Income
               </span>
               <span className="sf-finance-row-amt">{fmt(income)}</span>
             </div>
             <div className="sf-finance-row">
               <span className="sf-finance-row-label">
-                <span style={{ color: 'var(--expense)', fontSize: 14 }}>↓</span> Expenses
+                <span style={{ color: 'var(--expense)' }}>↓</span> Expenses
               </span>
               <span className="sf-finance-row-amt">{fmt(expense)}</span>
             </div>
@@ -164,18 +157,7 @@ export default function DashboardPage() {
           ) : (
             <div className="sf-dash-tasks-list">
               {openTasks.map(t => {
-                const dueLabel = t.dueDate
-                  ? (() => {
-                      const today2 = new Date(); today2.setHours(0,0,0,0)
-                      const due2 = parseISO(t.dueDate); due2.setHours(0,0,0,0)
-                      const days = Math.round((due2.getTime() - today2.getTime()) / 86400000)
-                      if (days < 0) return { label: `Overdue ${Math.abs(days)}d`, cls: 'due-overdue' }
-                      if (days === 0) return { label: 'Due today', cls: 'due-today' }
-                      if (days === 1) return { label: 'Due tomorrow', cls: 'due-soon' }
-                      return { label: `${MONTHS_SHORT[due2.getMonth()]} ${due2.getDate()}`, cls: '' }
-                    })()
-                  : { label: 'No due date', cls: '' }
-
+                const due = taskDueInfo(t.dueDate)
                 return (
                   <div
                     key={t.id}
@@ -185,18 +167,22 @@ export default function DashboardPage() {
                       className={`sf-dash-task-check${t.completed ? ' done' : ''}`}
                       onClick={() => toggleTask(t.id)}
                     >
-                      {t.completed && <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" width="10" height="10"><path d="M5 12l5 5L20 7"/></svg>}
+                      {t.completed && (
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" width="10" height="10">
+                          <path d="M5 12l5 5L20 7"/>
+                        </svg>
+                      )}
                     </button>
                     <div className="sf-dash-task-title">{t.title}</div>
                     <span
                       className="sf-dash-task-meta"
                       style={{
-                        color: dueLabel.cls === 'due-overdue' ? 'var(--expense)'
-                          : dueLabel.cls === 'due-today' ? 'var(--pending)'
+                        color: due.klass === 'due-overdue' ? 'var(--expense)'
+                          : due.klass === 'due-today' ? 'var(--pending)'
                           : 'var(--text-secondary)'
                       }}
                     >
-                      {dueLabel.label}
+                      {due.label}
                     </span>
                   </div>
                 )
