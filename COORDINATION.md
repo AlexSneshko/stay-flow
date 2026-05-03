@@ -2,8 +2,8 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: TEST SUITE COMPLETE  |  Session: 5
-Last commit: 4368569  |  Health: ✅
+Phase: 6 — DASHBOARD DESIGN MATCHED  |  Session: 6
+Last commit: 8693a4a  |  Health: ✅
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
@@ -18,16 +18,16 @@ Last commit: 4368569  |  Health: ✅
 - [x] Phase 9 — Recurring, Categories, Settings pages
 
 ## In Progress
-Test suite complete (session 5). Design-match pass still needed for remaining pages.
+Dashboard design-matched (session 6). Tasks, Recurring, Categories, Settings still need same treatment.
 
 ## Next Session — Start Here
-1. npm run dev → open http://localhost:3000/finance to verify Finance page
-2. Apply same design-match pass to remaining pages: Dashboard, Tasks, Recurring, Categories, Settings
+1. npm run dev → open http://localhost:3000/dashboard to verify Dashboard page
+2. Apply design-match pass to remaining pages: Tasks, Recurring, Categories, Settings
 3. Key remaining gaps per design:
-   - Dashboard greeting/sparkline card (check font sizes, layout)
    - Tasks: task row uses bg-surface card style in design, not bare flex
    - Recurring: rec-row is a surface card (bg-surface + border), not hover-only
    - Categories: cat-row grid (40px 1fr auto auto) confirmed; check system label
+   - Settings: check section headers, toggle styles, select widths
 
 ## Architectural Decisions
 - Local-first: Dexie writes first, Prisma sync secondary
