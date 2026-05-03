@@ -70,7 +70,7 @@ export default function RecurringPage() {
         <div className="sf-rec-icon" style={{ background: cat.color }}>
           {cat.icon}
         </div>
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ minWidth: 0 }}>
           <div className="sf-rec-title">{item.title}</div>
           <div className="sf-rec-badge">{item.frequency.toLowerCase()} · {dueLabel}</div>
         </div>

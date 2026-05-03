@@ -259,7 +259,10 @@ export default function CategoriesPage() {
               />
             ))}
           </div>
-          <div className="sf-rec-section-label">My task categories</div>
+          <div className="sf-rec-section-label">
+            <span>My task categories</span>
+            <span className="sf-section-badge">Yours</span>
+          </div>
           {userTask.length === 0 ? (
             <div className="sf-empty" style={{ padding: '30px 20px' }}>
               <div className="sf-empty-text">No custom task categories yet.</div>
@@ -297,7 +300,10 @@ export default function CategoriesPage() {
               />
             ))}
           </div>
-          <div className="sf-rec-section-label">My categories</div>
+          <div className="sf-rec-section-label">
+            <span>My categories</span>
+            <span className="sf-section-badge">Yours</span>
+          </div>
           {userFin.length === 0 ? (
             <div className="sf-empty" style={{ padding: '30px 20px' }}>
               <div className="sf-empty-text">No custom categories yet.</div>

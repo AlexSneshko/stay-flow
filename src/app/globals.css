@@ -1090,19 +1090,18 @@ textarea.sf-input {
   margin-bottom: 18px;
 }
 .sf-rec-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 40px 1fr auto auto auto;
   align-items: center;
   gap: 12px;
   padding: 12px 14px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  margin-bottom: 6px;
+  border-radius: 12px;
+  margin-bottom: 8px;
   cursor: pointer;
-  transition: background 0.1s;
 }
-.sf-rec-row:hover { background: var(--bg-hover); }
-.sf-rec-row.paused { opacity: 0.55; }
+.sf-rec-row.paused { opacity: 0.7; }
 .sf-rec-icon {
   width: 40px;
   height: 40px;
@@ -1122,24 +1121,53 @@ textarea.sf-input {
   text-overflow: ellipsis;
 }
 .sf-rec-badge {
-  font-size: 11.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
   color: var(--text-secondary);
-  text-transform: capitalize;
+  text-transform: uppercase;
   margin-top: 2px;
+  font-weight: 500;
 }
+.sf-rec-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--income);
+  flex-shrink: 0;
+}
+.sf-rec-row.paused .sf-rec-badge::before { background: var(--text-tertiary); }
 .sf-rec-amount {
   font-size: 15px;
   font-weight: 600;
-  margin-left: auto;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 .sf-rec-section-label {
-  font-size: 10px;
+  font-size: 10.5px;
   text-transform: uppercase;
-  letter-spacing: 0.10em;
+  letter-spacing: 0.12em;
+  color: var(--text-tertiary);
+  font-weight: 500;
+  margin: 20px 0 10px;
+  padding: 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sf-section-badge {
+  background: var(--bg-surface);
   color: var(--text-secondary);
-  font-weight: 600;
-  padding: 10px 0 6px;
+  padding: 1px 7px;
+  border-radius: 6px;
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--border);
+  text-transform: none;
+  font-weight: 400;
 }
 
 /* ============================================================
@@ -1517,24 +1545,23 @@ textarea.sf-input {
 .sf-cat-count { font-size: 12px; color: var(--text-secondary); }
 .sf-cat-actions { display: flex; gap: 4px; margin-left: auto; }
 .sf-cat-tabs {
-  display: flex;
-  gap: 4px;
-  background: var(--bg-surface-2);
+  display: inline-flex;
+  background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 3px;
 }
 .sf-cat-tabs button {
-  padding: 5px 14px;
-  border-radius: 16px;
-  font-size: 12.5px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: 13px;
   color: var(--text-secondary);
   cursor: pointer;
   font-family: inherit;
   transition: all 0.15s;
 }
 .sf-cat-tabs button.active {
-  background: var(--bg-surface);
+  background: var(--bg-page);
   color: var(--text-primary);
   box-shadow: var(--shadow-sm);
 }
@@ -1543,26 +1570,26 @@ textarea.sf-input {
    SETTINGS
    ============================================================ */
 
-.sf-settings-section { margin-bottom: 24px; }
+.sf-settings-section { margin-bottom: 32px; }
 .sf-settings-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-secondary);
-  letter-spacing: 0.06em;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 .sf-settings-card {
   background: var(--bg-surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
+  border-radius: 14px;
+  padding: 18px 20px;
 }
 .sf-settings-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 18px;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border);
   gap: 20px;
 }
@@ -1577,17 +1604,16 @@ textarea.sf-input {
   color: var(--text-secondary);
   margin-top: 2px;
 }
-.sf-swatch-row { display: flex; gap: 8px; }
+.sf-swatch-row { display: flex; gap: 10px; }
 .sf-swatch {
   width: 28px;
   height: 28px;
   border-radius: 50%;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   color: transparent;
-  transition: transform 0.15s;
+  transition: transform 0.1s ease;
 }
 .sf-swatch:hover { transform: scale(1.1); }
 .sf-swatch.active {
@@ -1797,6 +1823,8 @@ textarea.sf-input {
   .sf-dash-grid { grid-template-columns: 1fr; }
   .sf-mobile-bottom { display: flex; }
   .sf-mobile-fab { display: flex; }
+  .sf-rec-stats { grid-template-columns: 1fr; }
+  .sf-cat-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {
