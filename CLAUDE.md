@@ -30,6 +30,7 @@ next-themes (light+dark) · Vitest + RTL · @ducanh2912/next-pwa
 - date-fns for ALL date/time operations
 - Monetary amounts: store as integer cents ($12.50 → 1250), display formatted
 - Theme: light + dark via next-themes, CSS variables only
+- After every feature implementation run npm run check — all existing tests must still pass. Never commit if tests fail.
 
 ## Commands
 npm run dev          — dev server :3000
