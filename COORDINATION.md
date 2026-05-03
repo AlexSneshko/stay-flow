@@ -2,8 +2,8 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: 5 — DESIGN MATCHED  |  Session: 4
-Last commit: 72776a7  |  Health: ✅
+Phase: TEST SUITE COMPLETE  |  Session: 5
+Last commit: 4368569  |  Health: ✅
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
@@ -18,7 +18,7 @@ Last commit: 72776a7  |  Health: ✅
 - [x] Phase 9 — Recurring, Categories, Settings pages
 
 ## In Progress
-Finance module design-matched (session 4). All other phases still need same treatment.
+Test suite complete (session 5). Design-match pass still needed for remaining pages.
 
 ## Next Session — Start Here
 1. npm run dev → open http://localhost:3000/finance to verify Finance page
@@ -50,7 +50,7 @@ none
 ## Key Files
 - src/app/globals.css — all StayFlow CSS variables + sf- component classes
 - src/db/dexie.ts — StayFlowDatabase v2 (transactions, categories, recurring, tasks, taskCategories)
-- src/db/seeds.ts — 14 finance categories + 5 task categories
+- src/db/seeds.ts — 13 finance categories + 5 task categories (seeds.ts boolean guard fixed for fake-indexeddb)
 - src/store/financeStore.ts — activeMonth, prevMonth/nextMonth
 - src/store/tasksStore.ts — filter, activeDate
 - src/store/settingsStore.ts — currency, accentColor, weekStartsOn, roundToNearestDollar
