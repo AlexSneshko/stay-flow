@@ -57,7 +57,7 @@ export function Sidebar() {
               href={href}
               className={`sf-sidebar-item${active ? ' active' : ''}`}
             >
-              <Icon size={17} />
+              <Icon size={16} />
               {label}
             </Link>
           )

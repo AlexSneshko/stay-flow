@@ -20,7 +20,7 @@ export function BottomNav() {
       {ITEMS.map(({ href, label, Icon }) => {
         const active = pathname === href
         return (
-          <Link key={href} href={href} className={`flex flex-col items-center gap-1 py-2 flex-1 text-[10px] ${active ? 'text-[var(--accent)]' : 'text-[var(--text-secondary)]'}`}>
+          <Link key={href} href={href} className={active ? 'active' : ''}>
             <Icon size={22} />
             {label}
           </Link>

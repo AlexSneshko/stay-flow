@@ -154,17 +154,17 @@
   padding: 0 18px 18px;
 }
 .sf-logo-mark {
-  width: 30px;
-  height: 30px;
-  background: var(--accent);
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #3d5afe 0%, #2979ff 100%);
   border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   color: white;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 14px;
   flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(41, 121, 255, 0.4);
 }
 .sf-logo-text {
   color: #fff;
@@ -208,8 +208,8 @@
   position: relative;
 }
 .sf-sidebar-item svg {
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
 }
 .sf-sidebar-item:hover {
@@ -1599,10 +1599,9 @@ textarea.sf-input {
 .sf-avatar {
   width: 38px;
   height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
   font-size: 13px;
   font-weight: 700;
   color: white;
@@ -1748,7 +1747,8 @@ textarea.sf-input {
   display: none;
   z-index: 50;
 }
-.sf-mobile-bottom button {
+.sf-mobile-bottom button,
+.sf-mobile-bottom a {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -1758,9 +1758,12 @@ textarea.sf-input {
   font-size: 10px;
   color: var(--text-secondary);
   font-family: inherit;
+  text-decoration: none;
 }
-.sf-mobile-bottom button svg { width: 22px; height: 22px; }
-.sf-mobile-bottom button.active { color: var(--accent); }
+.sf-mobile-bottom button svg,
+.sf-mobile-bottom a svg { width: 22px; height: 22px; }
+.sf-mobile-bottom button.active,
+.sf-mobile-bottom a.active { color: var(--accent); }
 
 .sf-mobile-fab {
   position: fixed;

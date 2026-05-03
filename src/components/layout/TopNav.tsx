@@ -1,7 +1,7 @@
 'use client'
 
 import { usePathname } from 'next/navigation'
-import { Sun, Moon, Search, Bell, Plus } from 'lucide-react'
+import { Sun, Moon, Monitor, Search, Bell, Plus } from 'lucide-react'
 import { useTheme } from 'next-themes'
 
 const TITLE_MAP: Record<string, string> = {
@@ -40,7 +40,7 @@ export function TopNav() {
             aria-label="Light mode"
           >
             <Sun size={13} />
-            <span className="hidden sm:inline">Light</span>
+            <span>Light</span>
           </button>
           <button
             className={theme === 'dark' ? 'active' : ''}
@@ -48,7 +48,15 @@ export function TopNav() {
             aria-label="Dark mode"
           >
             <Moon size={13} />
-            <span className="hidden sm:inline">Dark</span>
+            <span>Dark</span>
+          </button>
+          <button
+            className={theme === 'system' ? 'active' : ''}
+            onClick={() => setTheme('system')}
+            aria-label="Auto mode"
+          >
+            <Monitor size={13} />
+            <span>Auto</span>
           </button>
         </div>
 
