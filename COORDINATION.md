@@ -2,8 +2,8 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: 9 — APP SHELL POLISHED  |  Session: 8
-Last commit: 87d2490  |  Health: ✅
+Phase: 9 — ALL PAGES DESIGN-MATCHED  |  Session: 9
+Last commit: e5a7ddb  |  Health: ✅
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
@@ -18,15 +18,16 @@ Last commit: 87d2490  |  Health: ✅
 - [x] Phase 9 — Recurring, Categories, Settings pages
 
 ## In Progress
-App Shell polished (session 8). Recurring, Categories, Settings need design-match pass.
+All pages design-matched (session 9). MVP visual complete.
 
 ## Next Session — Start Here
-1. npm run dev → verify Sidebar (gradient logo, accent left-border active), TopNav (Light/Dark/Auto pill), BottomNav (sf- CSS classes)
-2. Apply design-match pass to remaining pages: Recurring, Categories, Settings
-3. Key remaining gaps per design:
-   - Recurring: rec-row is a surface card (bg-surface + border), not hover-only; rec-stats grid
-   - Categories: cat-row grid (40px 1fr auto auto) confirmed; check system label badge
-   - Settings: section headers, toggle-row styles, select widths
+1. npm run dev → verify all pages visually match design
+2. Potential next tracks:
+   - Auth: wire NextAuth v5, replace DEMO_USER_ID = 'demo'
+   - Recurring processor: useRecurringProcessor hook (auto-create PENDING txns on mount)
+   - Add Recurring Modal: wire the "New recurring" flow fully
+   - PWA: test offline mode, check manifest + service worker
+   - Prisma sync: implement _dirty flag sync loop
 
 ## Architectural Decisions
 - Local-first: Dexie writes first, Prisma sync secondary
