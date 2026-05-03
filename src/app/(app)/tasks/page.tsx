@@ -339,11 +339,11 @@ export default function TasksPage() {
         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
           <div className="sf-date-nav">
             <button className="sf-arrow" onClick={() => shiftActiveDate(-1)}>
-              <ChevronLeft size={16} />
+              <ChevronLeft size={13} />
             </button>
             <span className="sf-date-nav-label">{dayLabel}</span>
             <button className="sf-arrow" onClick={() => shiftActiveDate(1)}>
-              <ChevronRight size={16} />
+              <ChevronRight size={13} />
             </button>
             <button
               className={`sf-today-pill${isToday ? ' active' : ''}`}
@@ -400,6 +400,12 @@ export default function TasksPage() {
       )}
 
       {/* Task list */}
+      {inDayView && (
+        <div className="sf-task-section-label" style={{ marginTop: 4, marginBottom: 8 }}>
+          <span>{dayLabel}</span>
+          <span style={{ flex: 'none', color: 'var(--text-tertiary)', fontSize: 11 }}>Day view</span>
+        </div>
+      )}
       {inDayView ? (
         <>
           {visibleOpen.filter(t => t.isPinned).length > 0 && (
@@ -419,7 +425,7 @@ export default function TasksPage() {
             </>
           )}
           {visibleOpen.length === 0 && (
-            <div className="sf-empty">
+            <div className="sf-empty" style={{ marginBottom: 14 }}>
               <div className="sf-empty-title">Nothing scheduled</div>
               <div className="sf-empty-text">No tasks were due on this day.</div>
             </div>
@@ -431,7 +437,7 @@ export default function TasksPage() {
             <div className="sf-empty">
               <div className="sf-empty-title">No tasks yet</div>
               <div className="sf-empty-text">Track financial intentions, follow-ups, and reviews here.</div>
-              <button className="sf-btn sf-btn-primary mt-2" onClick={() => setEditTask(null)}>Add your first</button>
+              <button className="sf-btn sf-btn-primary" style={{ marginTop: 8 }} onClick={() => setEditTask(null)}>Add your first</button>
             </div>
           ) : (
             <>
@@ -443,13 +449,9 @@ export default function TasksPage() {
                   ))}
                 </>
               ) : (
-                <div style={{ padding: '12px 0 14px', textAlign: 'center' }}>
-                  <div style={{ fontSize: 15, fontWeight: 500, color: 'var(--text-primary)' }}>
-                    {filter === 'all' ? 'Inbox zero' : 'Nothing here'}
-                  </div>
-                  <div style={{ fontSize: 13, color: 'var(--text-secondary)', marginTop: 4 }}>
-                    {filter === 'all' ? 'Every open task is handled.' : 'Try another filter or add a task.'}
-                  </div>
+                <div className="sf-empty" style={{ padding: '32px 20px', marginBottom: 14 }}>
+                  <div className="sf-empty-title">{filter === 'all' ? 'Inbox zero' : 'Nothing here'}</div>
+                  <div className="sf-empty-text">{filter === 'all' ? 'Every open task is handled.' : 'Try another filter or add a task.'}</div>
                 </div>
               )}
               {done.length > 0 && (
