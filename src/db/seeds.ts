@@ -18,7 +18,7 @@ const DEFAULT_CATEGORIES: Omit<DTransactionCategory, 'id'>[] = [
 ]
 
 export async function seedDefaultCategories(): Promise<void> {
-  const existing = await db.categories.where('isDefault').equals(1).count()
+  const existing = await db.categories.filter((c) => c.isDefault).count()
   if (existing > 0) return
   await db.categories.bulkAdd(DEFAULT_CATEGORIES)
 }
@@ -32,7 +32,7 @@ const DEFAULT_TASK_CATEGORIES: Omit<DTaskCategory, 'id'>[] = [
 ]
 
 export async function seedDefaultTaskCategories(): Promise<void> {
-  const existing = await db.taskCategories.where('isDefault').equals(1).count()
+  const existing = await db.taskCategories.filter((c) => c.isDefault).count()
   if (existing > 0) return
   await db.taskCategories.bulkAdd(DEFAULT_TASK_CATEGORIES)
 }
