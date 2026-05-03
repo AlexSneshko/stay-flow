@@ -2,8 +2,8 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: 8 — TASKS DESIGN MATCHED  |  Session: 7
-Last commit: cb1c89f  |  Health: ✅
+Phase: 9 — APP SHELL POLISHED  |  Session: 8
+Last commit: 87d2490  |  Health: ✅
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
@@ -18,10 +18,10 @@ Last commit: cb1c89f  |  Health: ✅
 - [x] Phase 9 — Recurring, Categories, Settings pages
 
 ## In Progress
-Tasks design-matched (session 7). Recurring, Categories, Settings still need same treatment.
+App Shell polished (session 8). Recurring, Categories, Settings need design-match pass.
 
 ## Next Session — Start Here
-1. npm run dev → open http://localhost:3000/tasks to verify Tasks page
+1. npm run dev → verify Sidebar (gradient logo, accent left-border active), TopNav (Light/Dark/Auto pill), BottomNav (sf- CSS classes)
 2. Apply design-match pass to remaining pages: Recurring, Categories, Settings
 3. Key remaining gaps per design:
    - Recurring: rec-row is a surface card (bg-surface + border), not hover-only; rec-stats grid
