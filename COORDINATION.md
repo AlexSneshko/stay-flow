@@ -2,8 +2,8 @@
 # Claude: READ THIS FIRST. Update before ending every session.
 
 ## Status
-Phase: 9 — ALL PAGES DESIGN-MATCHED  |  Session: 9
-Last commit: e5a7ddb  |  Health: ✅
+Phase: 10 — DEEP CODE AUDIT  |  Session: 10
+Last commit: 20cfc44  |  Health: ✅ (149/149 tests pass)
 
 ## Checklist
 - [x] Phase 0 — Git init + GitHub repo + develop branch
@@ -16,18 +16,23 @@ Last commit: e5a7ddb  |  Health: ✅
 - [x] Phase 7 — App Shell (Sidebar, TopNav, BottomNav, AppShell, globals.css, tokens)
 - [x] Phase 8 — Tasks module (task list, TaskModal, filters, productivity section)
 - [x] Phase 9 — Recurring, Categories, Settings pages
+- [x] Phase 10 — Deep code audit (docs/audit/code-audit.md)
 
 ## In Progress
-All pages design-matched (session 9). MVP visual complete.
+Code audit complete (session 10). Report at `docs/audit/code-audit.md`.
+45 findings: 8 critical, 10+ high, 9 medium, 18 low.
 
 ## Next Session — Start Here
-1. npm run dev → verify all pages visually match design
-2. Potential next tracks:
-   - Auth: wire NextAuth v5, replace DEMO_USER_ID = 'demo'
-   - Recurring processor: useRecurringProcessor hook (auto-create PENDING txns on mount)
-   - Add Recurring Modal: wire the "New recurring" flow fully
-   - PWA: test offline mode, check manifest + service worker
-   - Prisma sync: implement _dirty flag sync loop
+1. Review `docs/audit/code-audit.md` and triage fixes.
+2. Top fix priorities (from audit summary):
+   - BUG-MNY-001: FinanceChart Y-axis off by 100× (one-line fix)
+   - BUG-OFF-001..003, BUG-OFF-013: Add `_dirty: true` to all writes
+   - BUG-MNY-002: Implement `useRecurringProcessor`
+   - BUG-OFF-005: Sidebar `equals(1)` boolean query is broken
+   - BUG-MNY-003: Decide multi-currency policy (lock or convert)
+   - BUG-OFF-004: Add Dexie schema upgrade callback for v1→v2
+   - BUG-SEC-003: Wire NextAuth session into write paths
+   - BUG-RCT-011..012: Wire next-pwa, fix manifest icons
 
 ## Architectural Decisions
 - Local-first: Dexie writes first, Prisma sync secondary
